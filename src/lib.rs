@@ -35,6 +35,10 @@ impl Point3D {
         return (dx * dx + dy * dy + dz * dz).sqrt();
     }
 
+    pub fn length_squared(&self) -> f64 {
+        return self.x * self.x + self.y * self.y + self.z * self.z;
+    }
+
     pub fn length(&self) -> f64 {
         return self.distance(&Point3D::new(0.0, 0.0, 0.0));
     }
@@ -169,6 +173,12 @@ impl Camera {
             vertical,
         };
     }
+}
+
+#[test]
+fn test_length_squared() {
+    let p = Point3D::new(0.1, 0.2, 0.3);
+    assert_approx_eq!(p.length_squared(), 0.14);
 }
 
 #[test]
