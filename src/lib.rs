@@ -3,6 +3,7 @@ use std::cmp::PartialEq;
 #[cfg(test)]
 use assert_approx_eq::assert_approx_eq;
 use std::f64;
+use palette::float::Float;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Point3D {
@@ -173,6 +174,77 @@ impl Camera {
             vertical,
         };
     }
+}
+
+pub struct HitRecord {
+    pub t: f64,
+    pub point: Point3D,
+    pub normal: Point3D,
+}
+
+impl HitRecord {
+    pub fn new(t: f64, point: Point3D, normal: Point3D) -> HitRecord {
+        return HitRecord { t, point, normal };
+    }
+}
+
+pub trait Hittable {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord>;
+}
+
+pub struct Sphere {
+    center: Point3D,
+    radius: f64,
+}
+
+impl Sphere {
+    pub fn new(center: Point3D, radius: f64) -> Sphere {
+        return Sphere { center, radius };
+    }
+}
+
+impl Hittable for Sphere {
+    fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> Option<HitRecord> {
+        let oc = ray.origin - self.center;
+        let a = ray.direction.length_squared();
+        let half_b = oc.dot(&ray.direction);
+        let c = oc.length_squared() - self.radius * self.radius;
+        let discriminant = half_b * half_b - a * c;
+
+        if discriminant > 0.0 {
+            let root = discriminant.sqrt();
+            let mut temp = (-half_b - root) / a;
+            if temp < t_max && temp > t_min {
+                let p = ray.at(temp);
+                let normal = (p - self.center) / self.radius;
+                return Some(HitRecord {
+                    t: temp,
+                    point: p,
+                    normal,
+                });
+            }
+            temp = (-half_b + root) / a;
+            if temp < t_max && temp > t_min {
+                let p = ray.at(temp);
+                let normal = (p - self.center) / self.radius;
+                return Some(HitRecord {
+                    t: temp,
+                    point: p,
+                    normal,
+                });
+            }
+        }
+        return None;
+    }
+}
+
+#[test]
+fn test_sphere_hit() {
+    let center = Point3D::new(0.0, 0.0, 0.0);
+    let sphere = Sphere::new(center, 1.0);
+    let ray = Ray::new(Point3D::new(0.0, 0.0, -5.0), Point3D::new(0.0, 0.0, 1.0));
+    let hit = sphere.hit(&ray, 0.0, f64::INFINITY);
+    assert_eq!(hit.unwrap().t, 4.0);
 }
 
 #[test]
