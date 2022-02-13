@@ -1,7 +1,7 @@
-use std::ops::{Add, Div, Mul, Neg, Sub};
-use std::cmp::PartialEq;
 #[cfg(test)]
 use assert_approx_eq::assert_approx_eq;
+use std::cmp::PartialEq;
+use std::ops::{Add, Div, Mul, Neg, Sub};
 
 #[derive(Debug, Clone, Copy)]
 pub struct Point3D {
@@ -51,7 +51,6 @@ impl Point3D {
         return self.x * other.x + self.y * other.y + self.z * other.z;
     }
 }
-
 
 impl Add for Point3D {
     type Output = Point3D;
@@ -139,10 +138,7 @@ impl Div<f64> for Point3D {
 
 impl PartialEq for Point3D {
     fn eq(&self, other: &Point3D) -> bool {
-        return
-            self.x == other.x() &&
-                self.y == other.y() &&
-                self.z == other.z();
+        return self.x == other.x() && self.y == other.y() && self.z == other.z();
     }
 }
 
@@ -171,10 +167,16 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(origin: Point3D, viewport_height: f64, viewport_width: f64, focal_length: f64) -> Camera {
+    pub fn new(
+        origin: Point3D,
+        viewport_height: f64,
+        viewport_width: f64,
+        focal_length: f64,
+    ) -> Camera {
         let horizontal = Point3D::new(viewport_width, 0.0, 0.0);
         let vertical = Point3D::new(0.0, viewport_height, 0.0);
-        let lower_left_corner = origin - (horizontal / 2.0) - (vertical / 2.0) - Point3D::new(0.0, 0.0, focal_length);
+        let lower_left_corner =
+            origin - (horizontal / 2.0) - (vertical / 2.0) - Point3D::new(0.0, 0.0, focal_length);
 
         return Camera {
             origin,
@@ -195,7 +197,12 @@ pub struct HitRecord {
 
 impl HitRecord {
     pub fn new(t: f64, point: Point3D, normal: Point3D, front_face: bool) -> HitRecord {
-        return HitRecord { t, point, normal, front_face };
+        return HitRecord {
+            t,
+            point,
+            normal,
+            front_face,
+        };
     }
 }
 
@@ -267,7 +274,12 @@ fn test_length_squared() {
 
 #[test]
 fn test_camera() {
-    let camera = Camera::new(Point3D::new(0.0, 0.0, 0.0), 2.0, (800 / 600) as f64 * 2.0, 1.0);
+    let camera = Camera::new(
+        Point3D::new(0.0, 0.0, 0.0),
+        2.0,
+        (800 / 600) as f64 * 2.0,
+        1.0,
+    );
     assert_eq!(camera.origin.x(), 0.0);
     assert_eq!(camera.origin.y(), 0.0);
     assert_eq!(camera.origin.z(), 0.0);
@@ -277,10 +289,13 @@ fn test_camera() {
     assert_eq!(camera.lower_left_corner.z(), -1.0);
 }
 
-
 #[test]
 fn test_gen() {
-    let p = Point3D { x: 0.1, y: 0.2, z: 0.3 };
+    let p = Point3D {
+        x: 0.1,
+        y: 0.2,
+        z: 0.3,
+    };
     assert_eq!(p.x(), 0.1);
     assert_eq!(p.y(), 0.2);
     assert_eq!(p.z(), 0.3);
@@ -328,7 +343,7 @@ fn test_div() {
     let r = p / q;
     assert_approx_eq!(r.x(), 0.5);
     assert_approx_eq!(r.y(), 0.6666666666666666);
-    assert_approx_eq!(r.z(), 0.3/0.4);
+    assert_approx_eq!(r.z(), 0.3 / 0.4);
 }
 
 #[test]
