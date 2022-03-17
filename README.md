@@ -1,6 +1,6 @@
 # raytracer_rs
 
-This is a simple ray tracer based on the raytracing book here.[Ray Tracing in One Weekend
+This is a simple ray tracer based on the raytracing book here. [Ray Tracing in One Weekend
  by Peter Shirley](https://raytracing.github.io/books/RayTracingInOneWeekend.html). I used this project to *learn* Rust from scratch - this code can be terrible - sorry if you saw this and weren't thrilled.
 
 
