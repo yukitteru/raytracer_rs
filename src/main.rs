@@ -34,21 +34,13 @@ fn hit_sphere(center: Point3D, radius: f64, r: &Ray) -> f64 {
     };
 }
 
-#[test]
-fn test_ray_color() {
-    let p = Point3D::new(0.0, 0.0, 0.0);
-    let q = Point3D::new(1.0, 0.0, 0.0);
-    let r = Ray::new(p, q);
-    let w = Vec::new();
-    assert_eq!(ray_color(&r, &w), Srgb::new(0.75, 0.85, 1.0));
-}
-
 fn ray_color(ray: &Ray, world: &Vec<Sphere>) -> Srgb {
     let hit = hit_world(world, ray, 0.001, std::f64::MAX);
     return match hit {
         Some(hit_record) => {
-            let n = (ray.at(hit_record.t) - Point3D::new(0.0, 0.0, -1.0)).unit_vector();
-            Srgb::new(
+            // let n = (ray.at(hit_record.t) - Point3D::new(0.0, 0.0, -1.0)).unit_vector();
+            let n = hit_record.normal;
+            return Srgb::new(
                 0.5 * n.x() as f32 + 0.5,
                 0.5 * n.y() as f32 + 0.5,
                 0.5 * n.z() as f32 + 0.5,
@@ -63,6 +55,15 @@ fn ray_color(ray: &Ray, world: &Vec<Sphere>) -> Srgb {
             )
         }
     }
+}
+
+#[test]
+fn test_ray_color() {
+    let p = Point3D::new(0.0, 0.0, 0.0);
+    let q = Point3D::new(1.0, 0.0, 0.0);
+    let r = Ray::new(p, q);
+    let w = Vec::new();
+    assert_eq!(ray_color(&r, &w), Srgb::new(0.75, 0.85, 1.0));
 }
 
 fn render(pixels: &mut [u8], bounds: (usize, usize)) {
